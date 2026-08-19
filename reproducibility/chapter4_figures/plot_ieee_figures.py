@@ -40,6 +40,16 @@ LINE_STYLES = {
     "F": {"color": "#CC79A7", "marker": "P", "linestyle": (0, (3, 1, 1, 1))},
     "G": {"color": "#56B4E9", "marker": "X", "linestyle": (0, (1, 1))},
 }
+MODALITY_LABELS = {
+    "A": "A (W)",
+    "B": "B (W+P)",
+    "C": "C (W+M)",
+    "D": "D (W+P+I)",
+    "E": "E (W+I)",
+    "F": "F (W+M+I)",
+    "G": "G (M+I)",
+}
+
 
 
 def parse_args() -> argparse.Namespace:
@@ -180,10 +190,13 @@ def configure_ieee_style() -> None:
     )
 
 
-def style_axis(axis: plt.Axes) -> None:
+def style_axis(axis: plt.Axes, vertical_grid: bool = False) -> None:
     axis.set_axisbelow(True)
     axis.yaxis.grid(True, color="#D9D9D9", linewidth=0.45, linestyle="-")
-    axis.xaxis.grid(False)
+    if vertical_grid:
+        axis.xaxis.grid(True, color="#E6E6E6", linewidth=0.4, linestyle="-")
+    else:
+        axis.xaxis.grid(False)
     axis.spines["top"].set_visible(False)
     axis.spines["right"].set_visible(False)
     axis.tick_params(width=0.7, length=3.0)
@@ -191,11 +204,11 @@ def style_axis(axis: plt.Axes) -> None:
 
 def panel_label(axis: plt.Axes, label: str) -> None:
     axis.text(
-        0.015,
-        0.965,
+        0.5,
+        -0.265,
         label,
         transform=axis.transAxes,
-        ha="left",
+        ha="center",
         va="top",
         fontsize=9,
         fontweight="bold",
@@ -222,11 +235,11 @@ def save_figure(fig: plt.Figure, output_dir: Path, stem: str, dpi: int = 600) ->
 
 def figure1(data: dict[str, Any], output_dir: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.0))
-    fig.subplots_adjust(left=0.080, right=0.992, bottom=0.185, top=0.785, wspace=0.285)
+    fig.subplots_adjust(left=0.080, right=0.992, bottom=0.225, top=0.785, wspace=0.285)
     x = np.arange(len(VARIANTS), dtype=np.float64)
 
     csi = np.asarray([data["direct"]["csi"][variant]["nmse_db"] for variant in VARIANTS])
-    colors = ["#7F7F7F" if v == "A" else "#005A9C" if v == "D" else "#9ECAE1" for v in VARIANTS]
+    colors = [LINE_STYLES[variant]["color"] for variant in VARIANTS]
     bars = axes[0].bar(x, csi, width=0.66, color=colors, edgecolor="black", linewidth=0.5)
     axes[0].set_xlim(-0.6, 6.6)
     axes[0].set_ylim(-11.0, 0.0)
@@ -253,7 +266,7 @@ def figure1(data: dict[str, Any], output_dir: Path) -> None:
         ("Top-1", np.asarray([beam[v]["top1_pct"] for v in VARIANTS]), "#0072B2", None),
         ("Top-3", np.asarray([beam[v]["top3_pct"] for v in VARIANTS]), "#E69F00", "///"),
         (
-            "Normalized gain",
+            "Normalized beam gain",
             np.asarray([beam[v]["normalized_gain_pct"] for v in VARIANTS]),
             "#009E73",
             "xx",
@@ -293,7 +306,7 @@ def figure1(data: dict[str, Any], output_dir: Path) -> None:
 
 def figure2(data: dict[str, Any], output_dir: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.2))
-    fig.subplots_adjust(left=0.080, right=0.992, bottom=0.175, top=0.790, wspace=0.275)
+    fig.subplots_adjust(left=0.080, right=0.992, bottom=0.215, top=0.725, wspace=0.275)
     steps = np.arange(1, 9)
 
     for variant in VARIANTS:
@@ -301,7 +314,7 @@ def figure2(data: dict[str, Any], output_dir: Path) -> None:
         axes[0].plot(
             steps,
             data["rollout"]["csi"][variant]["nmse_db"],
-            label=variant,
+            label=MODALITY_LABELS[variant],
             color=style["color"],
             marker=style["marker"],
             linestyle=style["linestyle"],
@@ -315,7 +328,7 @@ def figure2(data: dict[str, Any], output_dir: Path) -> None:
     axes[0].set_ylim(-10.5, -3.0)
     axes[0].set_xlabel("Prediction step")
     axes[0].set_ylabel("NMSE (dB)")
-    style_axis(axes[0])
+    style_axis(axes[0], vertical_grid=True)
     panel_label(axes[0], "(a)")
 
     beam_values: list[float] = []
@@ -326,7 +339,7 @@ def figure2(data: dict[str, Any], output_dir: Path) -> None:
         axes[1].plot(
             steps,
             values,
-            label=variant,
+            label=MODALITY_LABELS[variant],
             color=style["color"],
             marker=style["marker"],
             linestyle=style["linestyle"],
@@ -342,20 +355,25 @@ def figure2(data: dict[str, Any], output_dir: Path) -> None:
     axes[1].set_yticks(np.arange(lower, 100.1, 5.0))
     axes[1].set_xlabel("Prediction step")
     axes[1].set_ylabel("Top-3 accuracy (%)")
-    style_axis(axes[1])
+    style_axis(axes[1], vertical_grid=True)
     panel_label(axes[1], "(b)")
 
     handles, labels = axes[0].get_legend_handles_labels()
+    # Matplotlib fills multi-row legends column-wise. Reorder the entries so
+    # that the visual reading order is A--D on the first row and E--G below.
+    legend_order = [0, 4, 1, 5, 2, 6, 3]
+    handles = [handles[index] for index in legend_order]
+    labels = [labels[index] for index in legend_order]
     fig.legend(
         handles,
         labels,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.985),
-        ncol=7,
+        bbox_to_anchor=(0.5, 0.995),
+        ncol=4,
         frameon=False,
-        handlelength=2.0,
-        columnspacing=1.35,
-        handletextpad=0.45,
+        handlelength=1.8,
+        columnspacing=0.9,
+        handletextpad=0.35,
     )
     save_figure(fig, output_dir, "fig2_recursive_comparison")
 
