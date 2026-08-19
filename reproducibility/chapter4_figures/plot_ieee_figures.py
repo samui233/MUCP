@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render IEEE-ready Chapter IV figures directly from saved numeric results."""
+"""Render IEEE-ready Chapter IV figures from filtered per-sample results."""
 
 from __future__ import annotations
 
@@ -52,12 +52,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def load_json(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        raise FileNotFoundError(f"Missing numeric result: {path}")
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -66,25 +60,33 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def source_paths(results_root: Path) -> dict[str, dict[str, dict[str, Path]]]:
-    direct = {"csi": {}, "beam": {}}
-    rollout = {"csi": {}, "beam": {}}
+def source_paths(results_root: Path) -> dict[str, Any]:
+    samples = {"csi": {}, "beam": {}}
     for variant in VARIANTS:
-        direct["csi"][variant] = results_root / f"csi_{variant}_test_best.json"
-        direct["beam"][variant] = results_root / "chapter4_test" / f"beam_{variant}_test_best.json"
-        if variant in {"C", "F"}:
-            rollout["csi"][variant] = (
-                results_root / "chapter4_ieee_raw" / f"csi_{variant}_test_rollout.json"
+        for task in ("csi", "beam"):
+            samples[task][variant] = (
+                results_root
+                / "chapter4_sample_metrics"
+                / f"{task}_{variant}_test_rollout_samples.npz"
             )
-            rollout["beam"][variant] = (
-                results_root / "chapter4_ieee_raw" / f"beam_{variant}_test_rollout.json"
-            )
-        else:
-            rollout["csi"][variant] = results_root / "chapter4" / f"csi_{variant}_rollout.json"
-            rollout["beam"][variant] = (
-                results_root / "chapter4_test" / f"beam_{variant}_test_rollout.json"
-            )
-    return {"direct": direct, "rollout": rollout}
+    filters = {
+        task: results_root / "chapter4_connected_filter" / f"{task}_test_connected_mask.npz"
+        for task in ("csi", "beam")
+    }
+    return {"samples": samples, "filters": filters}
+
+
+def load_npz(path: Path) -> dict[str, np.ndarray]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing numeric result: {path}")
+    with np.load(path) as archive:
+        return {key: archive[key] for key in archive.files}
+
+
+def validate_alignment(samples: dict[str, np.ndarray], mask: dict[str, np.ndarray], path: Path) -> None:
+    for key in ("route_id", "bs_id", "start_frame"):
+        if not np.array_equal(samples[key], mask[key]):
+            raise RuntimeError(f"Sample/filter key mismatch for {key}: {path}")
 
 
 def read_numeric_data(results_root: Path) -> tuple[dict[str, Any], list[Path]]:
@@ -93,46 +95,61 @@ def read_numeric_data(results_root: Path) -> tuple[dict[str, Any], list[Path]]:
     direct: dict[str, dict[str, dict[str, float]]] = {"csi": {}, "beam": {}}
     rollout: dict[str, dict[str, dict[str, list[float]]]] = {"csi": {}, "beam": {}}
 
+    filters = {task: load_npz(path) for task, path in paths["filters"].items()}
+    used_paths.extend(paths["filters"].values())
+    filter_metadata: dict[str, Any] = {}
+    for task, values in filters.items():
+        keep = values["keep"].astype(bool)
+        filter_metadata[task] = {
+            "threshold_db": float(values["threshold_db"]),
+            "rule": "minimum optimal-beam gain across all 16 sequence frames",
+            "frame_stride": int(values["frame_stride"]),
+            "total_samples": int(len(keep)),
+            "retained_samples": int(keep.sum()),
+            "removed_samples": int((~keep).sum()),
+        }
+
     for variant in VARIANTS:
-        csi_path = paths["direct"]["csi"][variant]
-        beam_path = paths["direct"]["beam"][variant]
-        csi_payload = load_json(csi_path)
-        beam_payload = load_json(beam_path)
+        csi_path = paths["samples"]["csi"][variant]
+        beam_path = paths["samples"]["beam"][variant]
+        csi = load_npz(csi_path)
+        beam = load_npz(beam_path)
         used_paths.extend((csi_path, beam_path))
-        if beam_payload.get("sampling_hz") != 5.0:
-            raise RuntimeError(f"Expected 5 Hz beam result: {beam_path}")
+        validate_alignment(csi, filters["csi"], csi_path)
+        validate_alignment(beam, filters["beam"], beam_path)
+
+        csi_keep = filters["csi"]["keep"].astype(bool)
+        beam_keep = filters["beam"]["keep"].astype(bool)
+        csi_error = csi["error"][csi_keep].astype(np.float64)
+        csi_power = csi["power"][csi_keep].astype(np.float64)
+        csi_nmse = csi_error.sum(axis=0) / np.maximum(csi_power.sum(axis=0), 1e-30)
+        csi_direct_nmse = csi_error[:, :2].sum() / max(csi_power[:, :2].sum(), 1e-30)
         direct["csi"][variant] = {
-            "nmse_db": float(csi_payload["metrics"]["nmse_db"]),
+            "nmse_db": float(10.0 * np.log10(max(csi_direct_nmse, 1e-30))),
         }
         direct["beam"][variant] = {
-            "top1_pct": 100.0 * float(beam_payload["metrics"]["top1"]),
-            "top3_pct": 100.0 * float(beam_payload["metrics"]["top3"]),
-            "normalized_gain_pct": 100.0 * float(beam_payload["metrics"]["normalized_gain"]),
+            "top1_pct": 100.0 * float(beam["correct1"][beam_keep, :2].mean()),
+            "top3_pct": 100.0 * float(beam["correct3"][beam_keep, :2].mean()),
+            "normalized_gain_pct": 100.0
+            * float(beam["normalized_gain"][beam_keep, :2].mean()),
         }
-
-        csi_rollout_path = paths["rollout"]["csi"][variant]
-        beam_rollout_path = paths["rollout"]["beam"][variant]
-        csi_rollout = load_json(csi_rollout_path)
-        beam_rollout = load_json(beam_rollout_path)
-        used_paths.extend((csi_rollout_path, beam_rollout_path))
-        if csi_rollout.get("variant") not in (None, variant):
-            raise RuntimeError(f"Variant mismatch: {csi_rollout_path}")
-        if beam_rollout.get("variant") not in (None, variant):
-            raise RuntimeError(f"Variant mismatch: {beam_rollout_path}")
-        csi_horizons = np.asarray(csi_rollout["horizons_ms"], dtype=np.float64)
-        beam_horizons = np.asarray(beam_rollout["horizons_ms"], dtype=np.float64)
-        if not np.array_equal(csi_horizons, np.arange(1, 9) * 50.0):
-            raise RuntimeError(f"Unexpected CSI horizons: {csi_rollout_path}")
-        if not np.array_equal(beam_horizons, np.arange(1, 9) * 200.0):
-            raise RuntimeError(f"Unexpected beam horizons: {beam_rollout_path}")
         rollout["csi"][variant] = {
-            "nmse_db": [float(value) for value in csi_rollout["nmse_db"]],
+            "nmse_db": [
+                float(value) for value in 10.0 * np.log10(np.maximum(csi_nmse, 1e-30))
+            ],
         }
         rollout["beam"][variant] = {
-            "top3_pct": [100.0 * float(value) for value in beam_rollout["correct3"]],
+            "top3_pct": [
+                100.0 * float(value)
+                for value in beam["correct3"][beam_keep].mean(axis=0)
+            ],
         }
 
-    return {"direct": direct, "rollout": rollout}, used_paths
+    return {
+        "evaluation_filter": filter_metadata,
+        "direct": direct,
+        "rollout": rollout,
+    }, used_paths
 
 
 def configure_ieee_style() -> None:
@@ -376,7 +393,12 @@ def write_plot_data(data: dict[str, Any], paths: list[Path], data_dir: Path) -> 
         json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     manifest = {
-        "policy": "All plotted values were loaded directly from saved JSON results; no image digitization.",
+        "policy": (
+            "All plotted values were aggregated directly from saved per-sample NPZ results after "
+            "applying the same data-defined connected-link mask to every A-G variant; no image "
+            "digitization or manual value editing."
+        ),
+        "evaluation_filter": data["evaluation_filter"],
         "sources": [
             {"path": str(path.relative_to(PROJECT_ROOT)), "sha256": sha256(path)}
             for path in sorted(set(paths))

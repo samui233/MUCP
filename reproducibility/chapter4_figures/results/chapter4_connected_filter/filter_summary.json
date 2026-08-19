@@ -1,0 +1,38 @@
+{
+  "csi": {
+    "task": "csi",
+    "rule": "minimum optimal-beam gain across all 16 sequence frames",
+    "threshold_db": -100.0,
+    "frame_stride": 1,
+    "total_samples": 2133,
+    "retained_samples": 2040,
+    "removed_samples": 93,
+    "minimum_gain_db_quantiles": {
+      "0.0": -146.4451446533203,
+      "0.01": -131.7408905029297,
+      "0.02": -129.21575927734375,
+      "0.05": -87.57833099365234,
+      "0.1": -84.09236145019531,
+      "0.5": -63.912757873535156,
+      "1.0": -43.257484436035156
+    }
+  },
+  "beam": {
+    "task": "beam",
+    "rule": "minimum optimal-beam gain across all 16 sequence frames",
+    "threshold_db": -100.0,
+    "frame_stride": 4,
+    "total_samples": 881,
+    "retained_samples": 827,
+    "removed_samples": 54,
+    "minimum_gain_db_quantiles": {
+      "0.0": -146.3777313232422,
+      "0.01": -134.37905883789062,
+      "0.02": -130.81317138671875,
+      "0.05": -121.00235748291016,
+      "0.1": -85.27339935302734,
+      "0.5": -65.10041046142578,
+      "1.0": -49.9868049621582
+    }
+  }
+}

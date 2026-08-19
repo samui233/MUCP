@@ -1,117 +1,87 @@
 {
-  "policy": "All plotted values were loaded directly from saved JSON results; no image digitization.",
+  "policy": "All plotted values were aggregated directly from saved per-sample NPZ results after applying the same data-defined connected-link mask to every A-G variant; no image digitization or manual value editing.",
+  "evaluation_filter": {
+    "csi": {
+      "threshold_db": -100.0,
+      "rule": "minimum optimal-beam gain across all 16 sequence frames",
+      "frame_stride": 1,
+      "total_samples": 2133,
+      "retained_samples": 2040,
+      "removed_samples": 93
+    },
+    "beam": {
+      "threshold_db": -100.0,
+      "rule": "minimum optimal-beam gain across all 16 sequence frames",
+      "frame_stride": 4,
+      "total_samples": 881,
+      "retained_samples": 827,
+      "removed_samples": 54
+    }
+  },
   "sources": [
     {
-      "path": "results/chapter4/csi_A_rollout.json",
-      "sha256": "e8b00a250160225847891a6fc19be03abc2a18aaf98ff5958380b988a0a0dbf9"
+      "path": "results/chapter4_connected_filter/beam_test_connected_mask.npz",
+      "sha256": "e4eef1f44bb9c0c1832b2970e07ee2535a9e39abfd8c6882dc7fd19291b9bed2"
     },
     {
-      "path": "results/chapter4/csi_B_rollout.json",
-      "sha256": "d2bef21d77c40a06fc2049814b70616d4f2c5bb54269470e4d9944b2e58d40c8"
+      "path": "results/chapter4_connected_filter/csi_test_connected_mask.npz",
+      "sha256": "4822bad9194d420ff1c925ae4c9d4d0b878f11403d75e56d63ea2251081300fe"
     },
     {
-      "path": "results/chapter4/csi_D_rollout.json",
-      "sha256": "c8a1c4d3f73c89b5a897ed9787c80bd6fb018ff8c8ead277e37190feed513d5d"
+      "path": "results/chapter4_sample_metrics/beam_A_test_rollout_samples.npz",
+      "sha256": "00b7ff3f5eda1c37c56aa179726e1150e7b1967da6c2e8e815c7d8e116d88f27"
     },
     {
-      "path": "results/chapter4/csi_E_rollout.json",
-      "sha256": "b5a0ca15ade91b41a023452f067fc8d2ec999ae1f3b492bc0f79f266a428d5dc"
+      "path": "results/chapter4_sample_metrics/beam_B_test_rollout_samples.npz",
+      "sha256": "12b792225d358501c149f334d3d889003a09a100d66cd8554162ea919a312580"
     },
     {
-      "path": "results/chapter4/csi_G_rollout.json",
-      "sha256": "aa9fd2fc594578a0c1391ac7c6f8ea23736bf65f7ddbcd1832a6d642081f78de"
+      "path": "results/chapter4_sample_metrics/beam_C_test_rollout_samples.npz",
+      "sha256": "d6482f5a9e662f2d6e662c0e03a8bd1c7c579254de5bc2b67bfb1d429fffab57"
     },
     {
-      "path": "results/chapter4_ieee_raw/beam_C_test_rollout.json",
-      "sha256": "d82ddb0319874e1ab42c75e516104bce1d8d1533a2682e050d62d72c3bf12bb1"
+      "path": "results/chapter4_sample_metrics/beam_D_test_rollout_samples.npz",
+      "sha256": "be99ded6fb363288a2ea26470760baaaa52bcb6bd73cf3fdc6d5d1c6ea677ac2"
     },
     {
-      "path": "results/chapter4_ieee_raw/beam_F_test_rollout.json",
-      "sha256": "a98ebaba4a68c2285370771c2e1c83813c282be93b0182f45744d88d69ddb005"
+      "path": "results/chapter4_sample_metrics/beam_E_test_rollout_samples.npz",
+      "sha256": "2f188fedd28068111dcd897191244ac49e4e7e8b2de0f55ba586f49535520a1c"
     },
     {
-      "path": "results/chapter4_ieee_raw/csi_C_test_rollout.json",
-      "sha256": "71de963150abd802fed1efc7779c99a6ad63a16b640c7bf42f5b15098e89a437"
+      "path": "results/chapter4_sample_metrics/beam_F_test_rollout_samples.npz",
+      "sha256": "a5e87cdec63e54c23f1ae1987910369c5ba4a543288417121be987c31dd02526"
     },
     {
-      "path": "results/chapter4_ieee_raw/csi_F_test_rollout.json",
-      "sha256": "ace564acded26ba2f8322ef5ba07eb4310fb5fd9c15d3dc0699e815b14235cd9"
+      "path": "results/chapter4_sample_metrics/beam_G_test_rollout_samples.npz",
+      "sha256": "03877140952dcf513c601b01c9edd046681643d64a411908d63a8dbbd9f4d8be"
     },
     {
-      "path": "results/chapter4_test/beam_A_test_best.json",
-      "sha256": "838c75679d5c1b4aca872c9da5610e517c0f2114626aab785c201e2ed73d409e"
+      "path": "results/chapter4_sample_metrics/csi_A_test_rollout_samples.npz",
+      "sha256": "324d5003d35a951f02937716d89f90f91c628f030dfdb68ee88b17dc2f6bff14"
     },
     {
-      "path": "results/chapter4_test/beam_A_test_rollout.json",
-      "sha256": "904efac4f214ff6d9f7f30a085fa33b987ee069d50ebeb570e4ce3f209f66b8f"
+      "path": "results/chapter4_sample_metrics/csi_B_test_rollout_samples.npz",
+      "sha256": "9e1a6ab33cf26730876f368cb958675e74cfd567bf0d01a13d522ec7435f6db4"
     },
     {
-      "path": "results/chapter4_test/beam_B_test_best.json",
-      "sha256": "78e73d387b82c5362f953750f869980e8dffcebdaf6af303e7e26d43f05b9edd"
+      "path": "results/chapter4_sample_metrics/csi_C_test_rollout_samples.npz",
+      "sha256": "cf970cc8053ad24341c77d2edc9d6c5d616b0ca2c70f8a6f5ca4f49a35b0b091"
     },
     {
-      "path": "results/chapter4_test/beam_B_test_rollout.json",
-      "sha256": "67757bf84f491b917cd1283d445c9e1c407fa8a153febfc701d1ac0fc23ea13f"
+      "path": "results/chapter4_sample_metrics/csi_D_test_rollout_samples.npz",
+      "sha256": "fffecc027fcf9a8e07ae38468e53b0ee5b0b74b74c6a9770f73d5f1c2fa8ec31"
     },
     {
-      "path": "results/chapter4_test/beam_C_test_best.json",
-      "sha256": "aee03e2b364eb0928093c183b1360815158d30ef4237e418c353a031b65a7345"
+      "path": "results/chapter4_sample_metrics/csi_E_test_rollout_samples.npz",
+      "sha256": "7c2b7b2237e4da1ae1d5719808d0e355d7d3bf8d1f2072c1438bc2a6a95c453a"
     },
     {
-      "path": "results/chapter4_test/beam_D_test_best.json",
-      "sha256": "4e185fa547c0cf851f44cb8a8ec66a9e843c2592b51f9e7ea9d8b93bfb206b50"
+      "path": "results/chapter4_sample_metrics/csi_F_test_rollout_samples.npz",
+      "sha256": "a5753bcc6f24b12aed3d437c5d4587e028054be63ac5788bba9fe04ca60027b6"
     },
     {
-      "path": "results/chapter4_test/beam_D_test_rollout.json",
-      "sha256": "210d53c1b19016717e8fd5ec363e8729c805d093609a110217e206ce76253255"
-    },
-    {
-      "path": "results/chapter4_test/beam_E_test_best.json",
-      "sha256": "0923570f15710100fd82868ea4ec56a53a0c377b37d0f78aba2a394376ed3813"
-    },
-    {
-      "path": "results/chapter4_test/beam_E_test_rollout.json",
-      "sha256": "3389e1b60e967bbebc7d9e413583721510ef540d01fae585677b23e53aa58eb3"
-    },
-    {
-      "path": "results/chapter4_test/beam_F_test_best.json",
-      "sha256": "901d06502880b46813c6068a53927021bb10309614ed224b10e668294ed3e504"
-    },
-    {
-      "path": "results/chapter4_test/beam_G_test_best.json",
-      "sha256": "41e82d89e31656c0276987962515a71f13afc4d6c66b11a825c00878f22ea724"
-    },
-    {
-      "path": "results/chapter4_test/beam_G_test_rollout.json",
-      "sha256": "34efbe43b3f8d266a91648a42a12c7124a517202d9d4bac96705200f9f85aae9"
-    },
-    {
-      "path": "results/csi_A_test_best.json",
-      "sha256": "70f8ac7966509e4e63ed3757fd5d0b296da4d500c60267475160daedec7f50e0"
-    },
-    {
-      "path": "results/csi_B_test_best.json",
-      "sha256": "6726551a29529d3c5fc3548034b69ebfbc8daf6a944460cc9c68db266a50520e"
-    },
-    {
-      "path": "results/csi_C_test_best.json",
-      "sha256": "693dd22dc92deb5776598f4314d2d052bb555a25bf7424d73b75809577d42078"
-    },
-    {
-      "path": "results/csi_D_test_best.json",
-      "sha256": "5decffa6be1a37f80f65a6d25168a56ee695cab2d27cf7f1b79656a01c215941"
-    },
-    {
-      "path": "results/csi_E_test_best.json",
-      "sha256": "1d060254dcfaffbadc667d3c956c3554f82c4c2c8f478a20e2d73f81b46a5860"
-    },
-    {
-      "path": "results/csi_F_test_best.json",
-      "sha256": "b58fb6f6a2c9d81176bd38a52b9efc026b06297a0aee2a89b0f74afbc52d29c4"
-    },
-    {
-      "path": "results/csi_G_test_best.json",
-      "sha256": "623dd44184def5f5bb4647a7ace26db8ea4e022e44f88e4b2804eed84739df41"
+      "path": "results/chapter4_sample_metrics/csi_G_test_rollout_samples.npz",
+      "sha256": "233ed81a623aa6d0a2cfbe970fc6fa60a9642a113468a757e0aaca7fe63095e0"
     }
   ]
 }
