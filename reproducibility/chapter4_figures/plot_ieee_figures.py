@@ -43,11 +43,11 @@ LINE_STYLES = {
 MODALITY_LABELS = {
     "A": "A (W)",
     "B": "B (W+P)",
-    "C": "C (W+M)",
+    "C": "C (W+P+M)",
     "D": "D (W+P+I)",
     "E": "E (W+I)",
-    "F": "F (W+M+I)",
-    "G": "G (M+I)",
+    "F": "F (W+P+M+I)",
+    "G": "G (P+M+I)",
 }
 
 
