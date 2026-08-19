@@ -1,0 +1,24 @@
+{
+  "png_dimensions": {
+    "fig1_task_modality_comparison.png": [
+      4296,
+      1800
+    ],
+    "fig2_recursive_comparison.png": [
+      4296,
+      1920
+    ]
+  },
+  "font": "Arial",
+  "font_sizes_pt": {
+    "axis_labels": 9,
+    "ticks": 8.5,
+    "legend": 8,
+    "panel_labels": 9
+  },
+  "gray_previews": [
+    "fig1_task_modality_comparison_gray_preview.png",
+    "fig2_recursive_comparison_gray_preview.png"
+  ],
+  "numeric_sources": "source_manifest.json"
+}

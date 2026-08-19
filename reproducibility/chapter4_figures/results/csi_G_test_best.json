@@ -1,0 +1,29 @@
+{
+  "run_name": "csi_G",
+  "task": "csi",
+  "variant": "G",
+  "modalities": [
+    "motion",
+    "rgb"
+  ],
+  "split": "test",
+  "checkpoint": "/root/autodl-tmp/simart-m2stformer/runs/csi_G/checkpoints/best.pt",
+  "metrics": {
+    "loss": 0.2268866199897004,
+    "mse": 0.2079194335566473,
+    "cosine_loss": 0.09253424411989745,
+    "temporal_delta_mse": 0.08496364143507208,
+    "angle_delay_l1": 0.02434804057549603,
+    "nmse": 0.4614004288776143,
+    "nmse_db": -3.3592200613244865,
+    "nmse_t1": 0.46380447993832535,
+    "nmse_t2": 0.4589775364841216,
+    "nmse_t1_db": -3.336650607797531,
+    "nmse_t2_db": -3.3820856940766792,
+    "complex_cosine_t1": 0.9071797247062644,
+    "complex_cosine_t2": 0.9077517960589088,
+    "seconds": 44.14681981597096,
+    "samples_per_second": 48.31605105173049
+  },
+  "evaluated_at_unix": 1786779151
+}

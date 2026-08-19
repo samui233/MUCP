@@ -1,0 +1,47 @@
+{
+  "run_name": "beam_C",
+  "task": "beam",
+  "variant": "C",
+  "modalities": [
+    "wireless",
+    "motion"
+  ],
+  "split": "test",
+  "checkpoint": "runs_beam_5hz/beam_C/checkpoints/best.pt",
+  "frame_stride": 4,
+  "sampling_hz": 5.0,
+  "prediction_horizons_ms": [
+    200.0,
+    400.0
+  ],
+  "metrics": {
+    "loss": 0.946619388193873,
+    "cross_entropy": 0.6533615759634133,
+    "stable_cross_entropy": 0.25343901108396444,
+    "switch_cross_entropy": 2.911615228815328,
+    "switch_target_fraction": 0.14982973876389147,
+    "top1": 0.8337116912599319,
+    "top3": 0.9619750283768445,
+    "normalized_gain": 0.9138621742690192,
+    "top1_t1": 0.8649262202043133,
+    "top1_t2": 0.8024971623155505,
+    "top3_t1": 0.9738933030646992,
+    "top3_t2": 0.9500567536889898,
+    "normalized_gain_t1": 0.9355027873183217,
+    "normalized_gain_t2": 0.8922215612197166,
+    "persistence_top1": 0.8501702610669694,
+    "persistence_top1_t1": 0.887627695800227,
+    "persistence_top1_t2": 0.8127128263337117,
+    "improvement_over_persistence": -0.016458569807037457,
+    "persistence_normalized_gain": 0.9285316402335714,
+    "persistence_normalized_gain_t1": 0.9538424055638568,
+    "persistence_normalized_gain_t2": 0.903220874903286,
+    "top1_stable": 0.9639519359145527,
+    "top1_switch": 0.0946969696969697,
+    "stable_targets": 1498,
+    "switch_targets": 264,
+    "seconds": 1.0683507178910077,
+    "samples_per_second": 824.6355669972779
+  },
+  "evaluated_at_unix": 1786804636
+}

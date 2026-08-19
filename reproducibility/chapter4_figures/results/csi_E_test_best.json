@@ -1,0 +1,29 @@
+{
+  "run_name": "csi_E",
+  "task": "csi",
+  "variant": "E",
+  "modalities": [
+    "wireless",
+    "rgb"
+  ],
+  "split": "test",
+  "checkpoint": "/root/autodl-tmp/simart-m2stformer/runs/csi_E/checkpoints/best.pt",
+  "metrics": {
+    "loss": 0.07406459550167606,
+    "mse": 0.0607164380185575,
+    "cosine_loss": 0.04915071195676972,
+    "temporal_delta_mse": 0.07522726306483059,
+    "angle_delay_l1": 0.018207206282951548,
+    "nmse": 0.13473772046802024,
+    "nmse_db": -8.705108044416642,
+    "nmse_t1": 0.13400571101578576,
+    "nmse_t2": 0.13547546691724047,
+    "nmse_t1_db": -8.728766926069124,
+    "nmse_t2_db": -8.681393435137144,
+    "complex_cosine_t1": 0.9519021185809214,
+    "complex_cosine_t2": 0.9497964557660225,
+    "seconds": 43.778101582080126,
+    "samples_per_second": 48.72298987202108
+  },
+  "evaluated_at_unix": 1786779032
+}

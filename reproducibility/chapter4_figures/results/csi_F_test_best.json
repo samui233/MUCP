@@ -1,0 +1,30 @@
+{
+  "run_name": "csi_F",
+  "task": "csi",
+  "variant": "F",
+  "modalities": [
+    "wireless",
+    "motion",
+    "rgb"
+  ],
+  "split": "test",
+  "checkpoint": "/root/autodl-tmp/simart-m2stformer/runs/csi_F/checkpoints/best.pt",
+  "metrics": {
+    "loss": 0.06358204595307984,
+    "mse": 0.05015594898725249,
+    "cosine_loss": 0.049598007491299424,
+    "temporal_delta_mse": 0.07554113675141161,
+    "angle_delay_l1": 0.0182436487898999,
+    "nmse": 0.11130261513637306,
+    "nmse_db": -9.534946314788261,
+    "nmse_t1": 0.10977642943599702,
+    "nmse_t2": 0.11284076205218965,
+    "nmse_t1_db": -9.59490899091496,
+    "nmse_t2_db": -9.475339895678644,
+    "complex_cosine_t1": 0.9514425620192158,
+    "complex_cosine_t2": 0.9493614264737258,
+    "seconds": 59.1663233009167,
+    "samples_per_second": 36.05091344195376
+  },
+  "evaluated_at_unix": 1786779099
+}

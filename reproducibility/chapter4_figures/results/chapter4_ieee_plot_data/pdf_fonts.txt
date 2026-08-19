@@ -1,0 +1,17 @@
+## fig1_task_modality_comparison.pdf
+
+```text
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+CWKGXT+ArialMT                       CID TrueType      Identity-H       yes yes yes     15  0
+CWKGXT+Arial-BoldMT                  CID TrueType      Identity-H       yes yes yes     22  0
+```
+
+## fig2_recursive_comparison.pdf
+
+```text
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+CWKGXT+ArialMT                       CID TrueType      Identity-H       yes yes yes     29  0
+CWKGXT+Arial-BoldMT                  CID TrueType      Identity-H       yes yes yes     36  0
+```
