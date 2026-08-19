@@ -326,6 +326,7 @@ def figure2(data: dict[str, Any], output_dir: Path) -> None:
     axes[0].set_xlim(0.75, 8.25)
     axes[0].set_xticks(steps)
     axes[0].set_ylim(-10.5, -3.0)
+    axes[0].set_yticks(np.arange(-10.0, -2.9, 1.0))
     axes[0].set_xlabel("Prediction step")
     axes[0].set_ylabel("NMSE (dB)")
     style_axis(axes[0], vertical_grid=True)
@@ -368,7 +369,7 @@ def figure2(data: dict[str, Any], output_dir: Path) -> None:
         handles,
         labels,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.995),
+        bbox_to_anchor=(0.5, 0.965),
         ncol=4,
         frameon=False,
         handlelength=1.8,
